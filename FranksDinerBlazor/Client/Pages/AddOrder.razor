@@ -1,0 +1,81 @@
+﻿@page "/Order/add"
+@page "/Order/edit/{Id:int}"
+@using FranksDinerBlazor.Shared.Models
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+<h1>@Title Order</h1>
+<hr />
+<EditForm Model="@Order" OnValidSubmit="SaveOrder">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label for="TableNumber" class="form-label">Table Number</label>
+        <div class="col-md-4">
+            <InputNumber class="form-control" @bind-Value="Order.TableNumber" />
+        </div>
+        <ValidationMessage For="@(() => Order.TableNumber)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="Items" class="form-label">Items</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="Order.Items" />
+        </div>
+        <ValidationMessage For="@(() => Order.Items)" />
+    </div>
+    <div class="mb-3">
+        <label for="IsPaid" class="form-label">Has Customer Paid?</label>
+        <div class="col-md-4">
+            <InputCheckbox class="form-check-input" @bind-Value="Order.IsPaid" />
+        </div>
+        <ValidationMessage For="@(() => Order.IsPaid)" />
+    </div>
+    <div class="mb-3">
+        <label for="IsConfirmed" class="form-label">Confirm Order?</label>
+        <div class="col-md-4">
+            <InputCheckbox class="form-check-input" @bind-Value="Order.IsConfirmed" />
+        </div>
+        <ValidationMessage For="@(() => Order.IsConfirmed)" />
+    </div>
+    <div class="mb-3">
+        <label for="Message" class="form-label">Restaurant Message</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="Order.Message" />
+        </div>
+        <ValidationMessage For="@(() => Order.Message)" />
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button class="btn btn-light" @onclick="Cancel">Cancel</button>
+    </div>
+</EditForm>
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    protected string Title = "Add";
+    protected Order Order = new();
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != 0)
+        {
+            Title = "Edit";
+            Order = await Http.GetFromJsonAsync<Order>("api/Order/" + Id);
+        }
+    }
+    protected async Task SaveOrder()
+    {
+        if (Order.Id != 0)
+        {
+            await Http.PutAsJsonAsync("api/Order", Order);
+        }
+        else
+        {
+            await Http.PostAsJsonAsync("api/Order", Order);
+        }
+        Cancel();
+    }
+    public void Cancel()
+    {
+        NavigationManager.NavigateTo("/fetchOrderdetails");
+    }
+}

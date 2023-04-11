@@ -1,0 +1,120 @@
+﻿@page "/fetchOrderdetails"
+@using FranksDinerBlazor.Shared.Models
+@using FranksDinerBlazor.Shared.Utilities
+@inject HttpClient Http
+@*<meta http-equiv="refresh" content="15">*@
+
+<h1>Order Data</h1>
+<div class="row">
+    <div class="col-md-6">
+        <a href='/Order/add' class="btn btn-primary" role="button">
+            <i class="fas fa-Order-plus"></i>
+            Add Order
+        </a>
+    </div>
+    <div class="input-group col">
+        <input type="number" class="form-control" placeholder="Search Order by table number"
+               min="1" max="200"
+               @bind="SearchString" @bind:event="oninput" @onkeyup="FilterOrder" />
+        @if (SearchString.Length > 0)
+        {
+            <div class="input-group-append">
+                <button class="btn btn-danger" @onclick="ResetSearch">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        }
+    </div>
+</div>
+<br />
+@if (OrderList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped align-middle table-bordered">
+        <thead class="table-success">
+            <tr>
+                <th>ID</th>
+                <th>Table Number</th>
+                <th>Items</th>
+                <th>Has Customer Paid?</th>
+                <th>Has Order Been Confirmed?</th>
+                <th>Restaurant Message</th>
+                <th>Order Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var Order in OrderList)
+            {
+                <tr>
+                    <td>@Order.Id</td>
+                    <td>@Order.TableNumber</td>
+                    <td>@Order.Items</td>
+                    <td>@Order.IsPaid</td>
+                    <td>@Order.IsConfirmed</td>
+                    <td>@Order.Message</td>
+                    <td>@Order.OrderDate</td>
+                    <td>
+                        <a href='/Order/edit/@Order.Id' class="btn btn-outline-dark" role="button">
+                            Edit
+                        </a>
+                        <a href='/Order/delete/@Order.Id' class="btn btn-outline-danger" role="button">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+}
+@code {
+    protected List<Order> OrderList = new();
+    protected List<Order> searchOrderData = new();
+    protected Order Order = new();
+    protected string SearchString { get; set; } = string.Empty;
+    private FranksTimer? timer;
+    protected override async Task OnInitializedAsync()
+    {
+        await this.GetOrder();
+
+        timer = new(5000);
+        timer.TimerElapsed += this.OnTimeElapsed;
+    }
+    private async void OnTimeElapsed(object? sender, EventArgs e)
+    {
+        await this.GetOrder();
+        // Update the UI
+        await this.InvokeAsync(StateHasChanged);
+    }
+
+    protected async Task GetOrder()
+    {
+        OrderList = await Http.GetFromJsonAsync<List<Order>>("api/Order");
+        searchOrderData = OrderList;
+    }
+    protected void FilterOrder()
+    {
+        if (!string.IsNullOrEmpty(SearchString))
+        {
+            OrderList = searchOrderData
+                .Where(x => x.TableNumber.ToString() == SearchString)
+                .ToList();
+        }
+        else
+        {
+            OrderList = searchOrderData;
+        }
+    }
+    protected void DeleteConfirm(int OrderID)
+    {
+        Order = OrderList.FirstOrDefault(x => x.Id == OrderID);
+    }
+    public void ResetSearch()
+    {
+        SearchString = string.Empty;
+        OrderList = searchOrderData;
+    }
+}
