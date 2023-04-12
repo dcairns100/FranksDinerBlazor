@@ -24,19 +24,12 @@
         <ValidationMessage For="@(() => Order.Items)" />
     </div>
     <div class="mb-3">
-        <label for="IsPaid" class="form-label">Has Customer Paid?</label>
+        <label for="Status" class="form-label">Status</label>
         <div class="col-md-4">
-            <InputCheckbox class="form-check-input" @bind-Value="Order.IsPaid" />
+            <label class="form-control">@Order.Status</label>
         </div>
-        <ValidationMessage For="@(() => Order.IsPaid)" />
     </div>
-    <div class="mb-3">
-        <label for="IsConfirmed" class="form-label">Confirm Order?</label>
-        <div class="col-md-4">
-            <InputCheckbox class="form-check-input" @bind-Value="Order.IsConfirmed" />
-        </div>
-        <ValidationMessage For="@(() => Order.IsConfirmed)" />
-    </div>
+
     <div class="mb-3">
         <label for="Message" class="form-label">Restaurant Message</label>
         <div class="col-md-4">

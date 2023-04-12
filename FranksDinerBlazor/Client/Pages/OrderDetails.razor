@@ -1,8 +1,10 @@
 ﻿@page "/fetchOrderdetails"
+@page "/fetchOrderdetails/{status}"
 @using FranksDinerBlazor.Shared.Models
 @using FranksDinerBlazor.Shared.Utilities
+@using Newtonsoft.Json
+@using FranksDinerBlazor.Shared.Constants
 @inject HttpClient Http
-@*<meta http-equiv="refresh" content="15">*@
 
 <h1>Order Data</h1>
 <div class="row">
@@ -39,8 +41,7 @@ else
                 <th>ID</th>
                 <th>Table Number</th>
                 <th>Items</th>
-                <th>Has Customer Paid?</th>
-                <th>Has Order Been Confirmed?</th>
+                <th>Status</th>
                 <th>Restaurant Message</th>
                 <th>Order Time</th>
             </tr>
@@ -52,17 +53,70 @@ else
                     <td>@Order.Id</td>
                     <td>@Order.TableNumber</td>
                     <td>@Order.Items</td>
-                    <td>@Order.IsPaid</td>
-                    <td>@Order.IsConfirmed</td>
+                    <td>@Order.Status</td>
                     <td>@Order.Message</td>
                     <td>@Order.OrderDate</td>
                     <td>
-                        <a href='/Order/edit/@Order.Id' class="btn btn-outline-dark" role="button">
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target='#confirm_@Order.Id' disabled="@(Order.Status==OrderStatus.Confirmed)">
+                            Confirm
+                        </button>
+                        <button href='/Order/edit/@Order.Id' class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target='#reject_@Order.Id' disabled="@(Order.Status==OrderStatus.Rejected)">
+                            Reject
+                        </button>
+                        <a href='/Order/edit/@Order.Id' class="btn btn-sm" role="button">
                             Edit
                         </a>
-                        <a href='/Order/delete/@Order.Id' class="btn btn-outline-danger" role="button">
+                        <a href='/Order/delete/@Order.Id' class="btn btn-sm" role="button">
                             Delete
                         </a>
+
+                        <!-- Confirm Modal -->
+                        <div class="modal fade" id="confirm_@Order.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Confirm Order</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to confirm this order?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" @onclick="(async () => await ConfirmOrder(Order.Id))">Confirm</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal -->
+                        <div class="modal fade" id="reject_@Order.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Reject Order</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Leave a message as to why the order is getting rejected
+                                        <EditForm Model="@Order" OnValidSubmit="RejectOrder">
+                                            <div class="mb-3">
+                                                <label for="Message" class="form-label">Restaurant Message</label>
+                                                <div class="col-md-4">
+                                                    <InputText class="form-control" @bind-Value="Order.Message" />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-primary">Confirm</button>
+                                            </div>
+                                        </EditForm>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        @*<button type="button" class="btn btn-primary" @onclick="(async () => await RejectOrder(Order.Id, Order.Message))">Confirm</button>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             }
@@ -71,6 +125,8 @@ else
     </table>
 }
 @code {
+    [Parameter]
+    public string? Status { get; set; }
     protected List<Order> OrderList = new();
     protected List<Order> searchOrderData = new();
     protected Order Order = new();
@@ -89,10 +145,17 @@ else
         // Update the UI
         await this.InvokeAsync(StateHasChanged);
     }
-
     protected async Task GetOrder()
     {
         OrderList = await Http.GetFromJsonAsync<List<Order>>("api/Order");
+
+        if (!string.IsNullOrWhiteSpace(Status))
+        {
+            OrderList = OrderList
+                .Where(x => x.Status == Status)
+                .ToList();
+        }
+
         searchOrderData = OrderList;
     }
     protected void FilterOrder()
@@ -108,13 +171,32 @@ else
             OrderList = searchOrderData;
         }
     }
-    protected void DeleteConfirm(int OrderID)
+    protected void DeleteConfirm(int orderID)
     {
-        Order = OrderList.FirstOrDefault(x => x.Id == OrderID);
+        Order = OrderList.FirstOrDefault(x => x.Id == orderID);
     }
     public void ResetSearch()
     {
         SearchString = string.Empty;
         OrderList = searchOrderData;
+    }
+    protected async Task ConfirmOrder(int orderID)
+    {
+        var orderContent = (await Http.GetAsync("api/Order/" + orderID)).Content.ReadAsStringAsync().Result;
+        var orderToConfirm = JsonConvert.DeserializeObject<Order>(orderContent);
+        orderToConfirm.Status = OrderStatus.Confirmed;
+
+        await Http.PutAsJsonAsync("api/Order", orderToConfirm);
+        //NavigationManager.NavigateTo("/fetchOrderdetails");
+    }
+    protected async Task RejectOrder()
+    {
+        var orderContent = (await Http.GetAsync("api/Order/" + Order.Id)).Content.ReadAsStringAsync().Result;
+        var order = JsonConvert.DeserializeObject<Order>(orderContent);
+        order.Status = OrderStatus.Rejected;
+        order.Message = Order.Message;
+
+        await Http.PutAsJsonAsync("api/Order", order);
+        //NavigationManager.NavigateTo("/fetchOrderdetails");
     }
 }

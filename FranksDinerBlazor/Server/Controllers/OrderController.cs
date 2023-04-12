@@ -1,12 +1,8 @@
 ﻿using FranksDinerBlazor.Server.Interfaces;
+using FranksDinerBlazor.Shared.Constants;
 using FranksDinerBlazor.Shared.Models;
 using FranksDinerBlazor.Shared.Models.Econduit;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace FranksDinerBlazor.Server.Controllers
 {
@@ -48,41 +44,43 @@ namespace FranksDinerBlazor.Server.Controllers
 
             var timeout = _config.GetValue<int>("Settings:OrderTimeout");
 
-            while (!order.IsConfirmed)
+            while (order.Status == OrderStatus.Pending)
             {
-                if (DateTime.Now <= order.OrderDate.AddSeconds(timeout) && string.IsNullOrEmpty(order.Message))
+                if (DateTime.Now <= order.OrderDate.AddSeconds(timeout))
                 {
                     _IOrder.DetachEntityState(order);
                     order = _IOrder.GetOrderData(order.Id);
                     continue;
                 }
-                return BadRequest($"Order has not been confirmed because: {order.Message}");                
+                break;              
             }
 
-            var parameters = new RunTransaction
-            {
-                Command = "Sale",
-                Key = _config.GetValue<string>("Settings:Econduit:ApiKey"),
-                Password = _config.GetValue<string>("Settings:Econduit:ApiPassword"),
-                Amount = order.Amount,
-                TerminalId = order.TerminalId,
-                RefID = string.Format(order.OrderDate.ToString("yyyyMMdd"), "-", order.TableNumber),
-                InvoiceNumber = string.Empty,
-                MerchantId = string.Empty,
-                Token = string.Empty,
-                ExpDate = string.Empty
-            };
+            return Ok(order);
 
-            if(await _econduitService.RunTransaction(parameters)){
-                order.IsPaid = true;
-                _IOrder.UpdateOrderDetails(order);
+            //var parameters = new RunTransaction
+            //{
+            //    Command = "Sale",
+            //    Key = _config.GetValue<string>("Settings:Econduit:ApiKey"),
+            //    Password = _config.GetValue<string>("Settings:Econduit:ApiPassword"),
+            //    Amount = order.Amount,
+            //    TerminalId = order.TerminalId,
+            //    RefID = string.Format(order.OrderDate.ToString("yyyyMMdd"), "-", order.TableNumber),
+            //    InvoiceNumber = string.Empty,
+            //    MerchantId = string.Empty,
+            //    Token = string.Empty,
+            //    ExpDate = string.Empty
+            //};
 
-                return Ok("Payment Successful");
-            }
-            else
-            {
-                return BadRequest("Payment Unsuccessful");
-            }            
+            //if(await _econduitService.RunTransaction(parameters)){
+            //    order.IsPaid = true;
+            //    _IOrder.UpdateOrderDetails(order);
+
+            //    return Ok("Payment Successful");
+            //}
+            //else
+            //{
+            //    return BadRequest("Payment Unsuccessful");
+            //}            
         }
 
         [HttpPut]
