@@ -1,7 +1,6 @@
 ﻿using FranksDinerBlazor.Server.Interfaces;
 using FranksDinerBlazor.Shared.Constants;
 using FranksDinerBlazor.Shared.Models;
-using FranksDinerBlazor.Shared.Models.Econduit;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FranksDinerBlazor.Server.Controllers
@@ -12,12 +11,10 @@ namespace FranksDinerBlazor.Server.Controllers
     {
         private readonly IOrder _IOrder;
         private readonly IConfiguration _config;
-        private readonly IEconduitService _econduitService;
-        public OrderController(IOrder iOrder, IConfiguration config, IEconduitService econduitService)
+        public OrderController(IOrder iOrder, IConfiguration config)
         {
             _IOrder = iOrder;
             _config = config;
-            _econduitService = econduitService;
         }
 
         [HttpGet]
@@ -94,6 +91,14 @@ namespace FranksDinerBlazor.Server.Controllers
         {
             _IOrder.DeleteOrder(id);
             return Ok();
+        }
+
+        [HttpPut("status")]
+        public void Status(Order order)
+        {
+            var origOrder = _IOrder.GetOrderData(order.Id);
+            origOrder.Status = order.Status;
+            _IOrder.UpdateOrderDetails(origOrder);
         }
     }
 }

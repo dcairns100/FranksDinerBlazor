@@ -57,16 +57,16 @@ else
                     <td>@Order.Message</td>
                     <td>@Order.OrderDate</td>
                     <td>
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target='#confirm_@Order.Id' disabled="@(Order.Status==OrderStatus.Confirmed)">
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target='#confirm_@Order.Id' disabled="@(IsNotPending(Order.Status))">
                             Confirm
                         </button>
-                        <button href='/Order/edit/@Order.Id' class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target='#reject_@Order.Id' disabled="@(Order.Status==OrderStatus.Rejected)">
+                        <button href='/Order/edit/@Order.Id' class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target='#reject_@Order.Id' disabled="@(IsNotPending(Order.Status))">
                             Reject
                         </button>
-                        <a href='/Order/edit/@Order.Id' class="btn btn-sm" role="button">
+                        <a href='/Order/edit/@Order.Id' class="btn btn-sm btn-light" role="button">
                             Edit
                         </a>
-                        <a href='/Order/delete/@Order.Id' class="btn btn-sm" role="button">
+                        <a href='/Order/delete/@Order.Id' class="btn btn-sm btn-light" role="button">
                             Delete
                         </a>
 
@@ -83,12 +83,12 @@ else
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" @onclick="(async () => await ConfirmOrder(Order.Id))">Confirm</button>
+                                        <button type="button" class="btn btn-primary" @onclick="(async () => await ConfirmOrder(Order.Id))" data-bs-dismiss="modal">Confirm</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Modal -->
+                        <!-- Reject Modal -->
                         <div class="modal fade" id="reject_@Order.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -97,22 +97,17 @@ else
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        Leave a message as to why the order is getting rejected
-                                        <EditForm Model="@Order" OnValidSubmit="RejectOrder">
-                                            <div class="mb-3">
+                                        Leave a message as to why the order is getting rejected                                       
+                                            <div class="mb-3">                                              
                                                 <label for="Message" class="form-label">Restaurant Message</label>
                                                 <div class="col-md-4">
-                                                    <InputText class="form-control" @bind-Value="Order.Message" />
+                                                <input type="text" class="form-control" @bind="@RejectMessage" @oninput="@((e) => { RejectMessage=(string)e.Value;})" />
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <button type="submit" class="btn btn-primary">Confirm</button>
-                                            </div>
-                                        </EditForm>
+                                            </div>                                        
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        @*<button type="button" class="btn btn-primary" @onclick="(async () => await RejectOrder(Order.Id, Order.Message))">Confirm</button>*@
+                                        <button type="button" class="btn btn-primary" @onclick="(async () => await RejectOrder(Order.Id, RejectMessage))" data-bs-dismiss="modal">Confirm</button>
                                     </div>
                                 </div>
                             </div>
@@ -132,6 +127,7 @@ else
     protected Order Order = new();
     protected string SearchString { get; set; } = string.Empty;
     private FranksTimer? timer;
+    private string RejectMessage { get; set; } = string.Empty;
     protected override async Task OnInitializedAsync()
     {
         await this.GetOrder();
@@ -182,21 +178,25 @@ else
     }
     protected async Task ConfirmOrder(int orderID)
     {
-        var orderContent = (await Http.GetAsync("api/Order/" + orderID)).Content.ReadAsStringAsync().Result;
-        var orderToConfirm = JsonConvert.DeserializeObject<Order>(orderContent);
-        orderToConfirm.Status = OrderStatus.Confirmed;
-
-        await Http.PutAsJsonAsync("api/Order", orderToConfirm);
-        //NavigationManager.NavigateTo("/fetchOrderdetails");
-    }
-    protected async Task RejectOrder()
-    {
-        var orderContent = (await Http.GetAsync("api/Order/" + Order.Id)).Content.ReadAsStringAsync().Result;
-        var order = JsonConvert.DeserializeObject<Order>(orderContent);
-        order.Status = OrderStatus.Rejected;
-        order.Message = Order.Message;
+        var order = await GetOrderById(orderID);
+        order.Status = OrderStatus.Confirmed;
 
         await Http.PutAsJsonAsync("api/Order", order);
-        //NavigationManager.NavigateTo("/fetchOrderdetails");
+    }
+    protected async Task RejectOrder(int orderID, string message)
+    {
+        var order = await GetOrderById(orderID);
+        order.Status = OrderStatus.Rejected;
+        order.Message = message;
+
+        await Http.PutAsJsonAsync("api/Order", order);
+    }
+    private async Task<Order?> GetOrderById(int orderID)
+    {
+        var orderContent = await (await Http.GetAsync("api/Order/" + orderID)).Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<Order>(orderContent);
+    }
+    private bool IsNotPending(string orderStatus){
+        return orderStatus != OrderStatus.Pending;
     }
 }
