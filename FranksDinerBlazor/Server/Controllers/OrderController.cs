@@ -49,35 +49,11 @@ namespace FranksDinerBlazor.Server.Controllers
                     order = _IOrder.GetOrderData(order.Id);
                     continue;
                 }
+                order.Message = "pending order has timed out, please call for assistance";
                 break;              
             }
 
-            return Ok(order);
-
-            //var parameters = new RunTransaction
-            //{
-            //    Command = "Sale",
-            //    Key = _config.GetValue<string>("Settings:Econduit:ApiKey"),
-            //    Password = _config.GetValue<string>("Settings:Econduit:ApiPassword"),
-            //    Amount = order.Amount,
-            //    TerminalId = order.TerminalId,
-            //    RefID = string.Format(order.OrderDate.ToString("yyyyMMdd"), "-", order.TableNumber),
-            //    InvoiceNumber = string.Empty,
-            //    MerchantId = string.Empty,
-            //    Token = string.Empty,
-            //    ExpDate = string.Empty
-            //};
-
-            //if(await _econduitService.RunTransaction(parameters)){
-            //    order.IsPaid = true;
-            //    _IOrder.UpdateOrderDetails(order);
-
-            //    return Ok("Payment Successful");
-            //}
-            //else
-            //{
-            //    return BadRequest("Payment Unsuccessful");
-            //}            
+            return Ok(order);     
         }
 
         [HttpPut]
