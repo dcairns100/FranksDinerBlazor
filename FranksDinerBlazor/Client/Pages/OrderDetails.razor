@@ -128,7 +128,7 @@ else
     protected string SearchString { get; set; } = string.Empty;
     private FranksTimer? timer;
     private string RejectMessage { get; set; } = string.Empty;
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         await this.GetOrder();
 
