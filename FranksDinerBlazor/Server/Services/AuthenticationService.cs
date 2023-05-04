@@ -13,7 +13,6 @@ namespace FranksDinerBlazor.Server.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _httpClientFactory;
 
@@ -29,9 +28,9 @@ namespace FranksDinerBlazor.Server.Services
         {
             var tokenValidationResult = await ValidateSocialToken(request);
 
-            if (tokenValidationResult.IsFailed)
+            if (tokenValidationResult == false)
             {
-                return tokenValidationResult;
+                return "Token is not valid";
             }
 
             var token = GetToken(await GetClaims());
@@ -44,12 +43,12 @@ namespace FranksDinerBlazor.Server.Services
             return string.Join(", ", errors.Select(error => error.Description).ToArray());
         }
 
-        private async Task ValidateSocialToken(SocialLoginRequest request)
+        private async Task<bool> ValidateSocialToken(SocialLoginRequest request)
         {
-            await ValidateGoogleToken(request);
+            return await ValidateGoogleToken(request);
         }
 
-        private async Task<string> ValidateGoogleToken(SocialLoginRequest request)
+        private async Task<bool> ValidateGoogleToken(SocialLoginRequest request)
         {
             try
             {
@@ -62,10 +61,10 @@ namespace FranksDinerBlazor.Server.Services
             }
             catch (InvalidJwtException _)
             {
-                return $"Google access token is not valid.";
+                return false;
             }
 
-            return "";
+            return true;
         }
 
         private JwtSecurityToken GetToken(IEnumerable<Claim> authClaims)
