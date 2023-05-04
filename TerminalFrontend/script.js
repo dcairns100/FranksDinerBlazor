@@ -209,18 +209,7 @@ function getSaleQueryString() {
 
 function sendPaymentRequest() {
     const url = globalSettings.eConduitUrl + getSaleQueryString();
-    fetch(url)
-    .then(
-        response => response.json())
-    .then((data) => {
-        if(data.ResultCode === "Approved") {
-            sendOrderPaid();
-            sessionStorage.removeItem("refId");
-        }
-        else {
-            throw new Error("failed to parse data", data)
-        }
-    }).catch(exception => {
+    fetch(url).catch(exception => {
         console.error(exception);
         showErrorModal("Error - Please contact staff", exception);
     });
