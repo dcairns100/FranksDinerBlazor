@@ -2,8 +2,8 @@
 
 namespace FranksDinerBlazor.Shared.Dtos
 {
-    public class FacebookTokenValidationResult
+    public class GoogleTokenValidationResult
     {
-        [JsonPropertyName("data")] public FacebookTokenValidationData Data { get; set; } = null!;
+        [JsonPropertyName("data")] public GoogleTokenValidationData Data { get; set; } = null!;
     }
 }
