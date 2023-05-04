@@ -198,7 +198,7 @@ function getSaleQueryString() {
         TerminalId: globalSettings.terminalId,
         Command: "sale",
         MerchantId: "",
-        RefId: new Date(),
+        RefId: Date.now(),
         PaymentType: "",
         Amount: calculateTotal(),
         InvoiceNumber: "",
