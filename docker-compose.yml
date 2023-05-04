@@ -1,0 +1,27 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: ./TerminalFrontend
+      dockerfile: ./Dockerfile
+    container_name: franks-diner-frontend
+    hostname: franks-diner-frontend
+    ports:
+      - "80:80"
+    networks:
+      - franks-network
+  server:
+    build: .
+    container_name: franks-diner-server
+    hostname: franks-diner-server
+    volumes:
+      - ./FranksDinerBlazor/Server/Database:/db
+    ports:
+      - "8100:4300"
+    networks:
+      - franks-network
+
+networks:
+  franks-network:
+    driver: bridge
+

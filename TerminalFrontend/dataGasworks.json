@@ -1,0 +1,141 @@
+{
+    "logo": "https://i.imgur.com/CjsdsQ6.png",
+    "sections": [
+        {
+            "name": "Starters & smalls",
+            "items": [
+                {
+                    "name": "Caesar salad the right way",
+                    "description": "signature anchovy dressing",
+                    "price": 6.5
+                },
+                {
+                    "name": "Chefs soup of the day",
+                    "price": 5
+                },
+                {
+                    "name": "Club sandwich",
+                    "description": "white toast, chicken, lettuce, tomato, bacon, mayo and fries",
+                    "price": 10
+                }
+            ]
+        },
+        {
+            "name": "From our grill",
+            "items": [
+                {
+                    "name": "The signature burger",
+                    "description": "toasted brioche bun, fully dressed, topped with bacon and cheese, battered onion rings, fries and burger relish",
+                    "price": 14
+                },
+                {
+                    "name": "Chicken stack",
+                    "description": "with traditional champ, tobacco onions and whiskey peppercorn sauce",
+                    "price": 13.5
+                },
+                {
+                    "name": "Sirloin steak",
+                    "description": "served with chunky chips, field mushroom, oven roasted tomato, onion rings and choice of sauce: whiskey peppercorn or red wine jus",
+                    "price": 22.5
+                }
+            ]
+        },
+        {
+            "name": "Mains",
+            "items": [
+                {
+                    "name": "Walter Ewing's beer battered haddock and chips",
+                    "description": "mushy peas and a dollop of homemade tartare sauce",
+                    "price": 14
+                },
+                {
+                    "name": "Penne al arrabbiata",
+                    "description": "tomato sauce with garlic and a hint of chilli, shaved parmesan",
+                    "price": 13.5
+                }
+            ]
+        },
+        {
+            "name": "Pizzas",
+            "items": [
+                {
+                    "name": "Stone baked pizza margherita",
+                    "price": 12
+                },
+                {
+                    "name": "Extra pepperoni",
+                    "price": 1
+                },
+                {
+                    "name": "Extra ham",
+                    "price": 1
+                },
+                {
+                    "name": "Extra mushrooms",
+                    "price": 1
+                },
+                {
+                    "name": "Extra red onion",
+                    "price": 1
+                },
+                {
+                    "name": "Extra olives",
+                    "price": 1
+                },
+                {
+                    "name": "Extra jalapeno peppers",
+                    "price": 1
+                }
+            ]
+        },
+        {
+            "name": "Sides",
+            "items": [
+                {
+                    "name": "Dressed green leaves",
+                    "description": "with tomato & red onion",
+                    "price": 3.5
+                },
+                {
+                    "name": "Bowl of fries",
+                    "price": 3.5
+                },
+                {
+                    "name": "Onion rings",
+                    "price": 3.5
+                }
+            ]
+        },
+        {
+            "name": "Desserts",
+            "items": [
+                {
+                    "name": "Ice cream sundae",
+                    "price": 5.5
+                },
+                {
+                    "name": "Warm chocolate fondant",
+                    "description": "chocolate sauce, vanilla ice cream",
+                    "price": 6
+                },
+                {
+                    "name": "Lemon tart",
+                    "description": "fresh cream, raspberry sorbet",
+                    "price": 6
+                }
+            ]
+        }
+    ],
+    "theme": {
+        "fgColor": "#132736",
+        "bgColor": "#212529",
+        "textPrimary": "#FFFFFF",
+        "textSecondary": "#FFFFFF",
+        "btnTextColor": "#FFFFFF",
+        "btnBgColor": "#0d6efd",
+        "btnActiveTextColor": "#FFFFFF",
+        "btnActiveBg": "#0a58ca",
+        "btnActiveBorderColor": "#0a53be",
+        "btnBorderColor": "#0d6efd"
+    }
+}

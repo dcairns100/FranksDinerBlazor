@@ -1,0 +1,4 @@
+export const globalSettings = {
+    managementSystemUrl: "",
+    runTransactionUrl: "https://someendpoint/api.asmx/runTransaction?"
+};
