@@ -9,6 +9,7 @@ namespace FranksDinerBlazor.Server.Controllers
     [Route("api/[controller]")]
     [Authorize]
     [ApiController]
+    [Authorize]
     public class OrderController : ControllerBase
     {
         private readonly IOrder _IOrder;
