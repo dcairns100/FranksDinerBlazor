@@ -1,6 +1,9 @@
+using FranksDinerBlazor.Client;
+using FranksDinerBlazor.Server.Authentication;
 using FranksDinerBlazor.Server.Interfaces;
 using FranksDinerBlazor.Server.Models;
 using FranksDinerBlazor.Server.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +32,11 @@ builder.Services.AddCors(policyBuilder =>
         policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod())
 );
 
+builder.Services.AddAuthentication(
+        options => options.DefaultScheme = "FranksDinerAuthScheme")
+    .AddScheme<FranksDinerAuthSchemeOptions, FranksDinerAuthHandler>(
+        "FranksDinerAuthScheme", options => { });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -55,5 +63,6 @@ app.MapControllers();
 app.MapFallbackToFile("index.html");
 
 app.UseCors();
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.Run();
