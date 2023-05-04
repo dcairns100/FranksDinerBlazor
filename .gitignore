@@ -3,6 +3,7 @@
 ################################################################################
 
 /.vs
+/.idea
 /FranksDinerBlazor/Client/bin/Debug/net6.0
 /FranksDinerBlazor/Client/obj
 /FranksDinerBlazor/Server/bin/Debug/net6.0
@@ -11,3 +12,4 @@
 /FranksDinerBlazor/Shared/bin/Debug/net6.0
 /FranksDinerBlazor/Shared/obj/Debug/net6.0
 /FranksDinerBlazor/Shared/obj
+TerminalFrontend/settings.js

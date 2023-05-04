@@ -1,0 +1,100 @@
+{
+    "title": "Frank's Diner",
+    "logo": "https://i.imgur.com/3UbKM5b.png",
+    "sections": [
+        {
+            "name": "Mains",
+            "items": [
+                {
+                    "name": "Garbage Salad",
+                    "description": "Crisp romaine lettuce tossed with our homemade bin-juice dressing, croutons, and shredded parmesan cheese.",
+                    "price": 19
+                },
+                {
+                    "name": "Grilled Worms",
+                    "description": "A grilled, queen-cut worm served with dirt alfredo.",
+                    "price": 17
+                },
+                {
+                    "name": "Creamy Ants",
+                    "description": "Ant breast sautéed with fresh sage and prosciutto. Served atop creamy asiago linguini.",
+                    "price": 21
+                },
+                {
+                    "name": "From the Skip",
+                    "description": "Fresh household waste in beer batter and fried to a golden brown.",
+                    "price": 23
+                },
+                {
+                    "name": "Steve Special",
+                    "description": "Tenderloin snail shell, sautéed with mushrooms and finished with a bourbon-BBQ sauce.",
+                    "price": 18
+                },
+                {
+                    "name": "Cricket Marsala",
+                    "description": "Boneless cricket breast sautéed with mushrooms and finished in a marsala and cream reduction.",
+                    "price": 22
+                }
+            ]
+        },
+        {
+            "name": "Sides",
+            "items": [
+                {
+                    "name": "Mouldy Old Strawberries",
+                    "price": 5
+                },
+                {
+                    "name": "Roach Rings",
+                    "price": 4
+                },
+                {
+                    "name": "Trash Brown",
+                    "price": 3
+                },
+                {
+                    "name": "Slug Nuggets",
+                    "price": 4
+                },
+                {
+                    "name": "Soggy Leaves",
+                    "price": 6
+                }
+            ]
+        },
+        {
+            "name": "Drinks",
+            "items": [
+                {
+                    "name": "Half Can of Special Brew",
+                    "price": 4
+                },
+                {
+                    "name": "Slug Juice",
+                    "price": 5
+                },
+                {
+                    "name": "Dirty Dish Water",
+                    "price": 4
+                },
+                {
+                    "name": "WKD",
+                    "price": 5
+                }
+            ]
+        }
+    ],
+    "theme": {
+        "currency": "£",
+        "fgColor": "#f8f9fa",
+        "bgColor": "#003482",
+        "textPrimary": "#000000",
+        "textSecondary": "#0000FF",
+        "btnTextColor": "#FFFFFF",
+        "btnBgColor": "#0d6efd",
+        "btnActiveTextColor": "#FFFFFF",
+        "btnActiveBg": "#0a58ca",
+        "btnActiveBorderColor": "#0a53be",
+        "btnBorderColor": "#0d6efd"
+    }
+}
