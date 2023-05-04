@@ -198,17 +198,17 @@ function getSaleQueryString() {
         TerminalId: globalSettings.terminalId,
         Command: "sale",
         MerchantId: "",
-        RefId: Date.now(),
+        RefId: sessionStorage.getItem("refId"),
         PaymentType: "",
         Amount: calculateTotal(),
         InvoiceNumber: "",
         ExpDate: ""
     });
-    return params.toString();
+    return `runTransaction?${params.toString()}`;
 }
 
 function sendPaymentRequest() {
-    const url = globalSettings.runTransactionUrl + getSaleQueryString();
+    const url = globalSettings.eConduitUrl + getSaleQueryString();
     fetch(url)
     .then(
         response => response.json())
@@ -262,6 +262,7 @@ function showErrorModal(title, message) {
 }
 
 function sendOrder() {
+    sessionStorage.setItem("refId", Date.now());
     fetch(globalSettings.managementSystemUrl + "/api/order", {
         method: "POST",
         body: getOrderBody(),
@@ -298,11 +299,52 @@ function setGlobalSettingsFromQueryString() {
     globalSettings.tableNumber = getQueryVariable("tableNumber");
 }
 
+function getCheckStatusQueryString(refId) {
+    const formatDateToMMDDYYY = date => {
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const days = date.getDate().toString().padStart(2, '0');
+        const year = date.getFullYear().toString();
+        return `${month}${days}${year}`;
+    }
+    const params = new URLSearchParams({
+        Key: globalSettings.apiKey,
+        Password: globalSettings.apiPassword,
+        TerminalId: globalSettings.terminalId,
+        Command: "sale",
+        RefId: refId,
+        Date: formatDateToMMDDYYY(new Date())
+    });
+    return `checkStatus?${params.toString()}`;
+}
+
+function sendCheckStatus(refId) {
+    const url = globalSettings.eConduitUrl + getCheckStatusQueryString(refId);
+    return fetch(url)
+    .then(
+        response => response.json())
+    .then((data) => {
+        if(data.ResultCode === "Approved") {
+            sendOrderPaid();
+        }
+
+        else {
+            throw new Error("failed to parse data", data)
+        }
+    }).catch(exception => {
+        console.error(exception);
+        showErrorModal("Error - Error with payment - please order again", exception);
+    });
+}
+
 function ready() {
     getDataJSON();
     setGlobalSettingsFromQueryString();
     document.getElementById("orderButton").addEventListener("click", sendOrder);
     //setTimeout(getDataJSON, 5000); //refresh the data every 30 seconds
+    if (sessionStorage.getItem("refId") != null) {
+        sendCheckStatus(sessionStorage.getItem("refId")).then(sendOrderPaid());
+    }
+    sessionStorage.removeItem("refId");
 }
 
 document.addEventListener("DOMContentLoaded", ready);
