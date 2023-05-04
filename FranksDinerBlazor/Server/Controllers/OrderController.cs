@@ -1,12 +1,14 @@
 ﻿using FranksDinerBlazor.Server.Interfaces;
 using FranksDinerBlazor.Shared.Constants;
 using FranksDinerBlazor.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FranksDinerBlazor.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrderController : ControllerBase
     {
         private readonly IOrder _IOrder;
