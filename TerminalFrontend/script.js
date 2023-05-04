@@ -220,7 +220,7 @@ function sendOrderPaid() {
     fetch(globalSettings.managementSystemUrl + "/api/order/status", {
         method: "PUT",
         body: JSON.stringify({
-            id: globalSettings.orderId,
+            id: sessionStorage.getItem("orderId"),
             status: "paid"
         }),
         headers: new Headers({'content-type': 'application/json'})
@@ -261,7 +261,7 @@ function sendOrder() {
         response => response.json()
     ).then((data) => {
         if (data.status === "confirmed") {
-            globalSettings.orderId = data.id;
+            sessionStorage.setItem("orderId", data.id);
             sendPaymentRequest();
         }
         else {
@@ -309,14 +309,18 @@ function getCheckStatusQueryString(refId) {
 
 function sendCheckStatus(refId) {
     const url = globalSettings.eConduitUrl + getCheckStatusQueryString(refId);
-    return fetch(url)
+    fetch(url)
     .then(
-        response => response.json())
+        response => {
+            return response.json();
+        })
     .then((data) => {
+        console.log(data);
         if(data.ResultCode === "Approved") {
             sendOrderPaid();
+            sessionStorage.removeItem("refId");
+            sessionStorage.removeItem("orderId");
         }
-
         else {
             throw new Error("failed to parse data", data)
         }
@@ -334,7 +338,6 @@ function ready() {
     if (sessionStorage.getItem("refId") != null) {
         sendCheckStatus(sessionStorage.getItem("refId"));
     }
-    sessionStorage.removeItem("refId");
 }
 
 document.addEventListener("DOMContentLoaded", ready);
