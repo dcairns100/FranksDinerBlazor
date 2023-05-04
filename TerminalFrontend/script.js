@@ -215,6 +215,7 @@ function sendPaymentRequest() {
     .then((data) => {
         if(data.ResultCode === "Approved") {
             sendOrderPaid();
+            sessionStorage.removeItem("refId");
         }
         else {
             throw new Error("failed to parse data", data)
@@ -342,7 +343,7 @@ function ready() {
     document.getElementById("orderButton").addEventListener("click", sendOrder);
     //setTimeout(getDataJSON, 5000); //refresh the data every 30 seconds
     if (sessionStorage.getItem("refId") != null) {
-        sendCheckStatus(sessionStorage.getItem("refId")).then(sendOrderPaid());
+        sendCheckStatus(sessionStorage.getItem("refId"));
     }
     sessionStorage.removeItem("refId");
 }
