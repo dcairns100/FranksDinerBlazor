@@ -4,7 +4,6 @@ services:
     build:
       context: ./TerminalFrontend
       dockerfile: ./Dockerfile
-    image: franks-diner-frontent:latest
     container_name: franks-diner-frontend
     hostname: franks-diner-frontend
     ports:
@@ -12,10 +11,7 @@ services:
     networks:
       - franks-network
   server:
-    build:
-      dockerfile: ./Dockerfile
-      context: ./FranksDinerBlazor
-    image: franks-diner-server:latest
+    build: .
     container_name: franks-diner-server
     hostname: franks-diner-server
     volumes:
