@@ -6,6 +6,14 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var configuration = builder.Configuration;
+
+builder.Services.AddAuthentication()
+    .AddGoogle(o =>
+    {
+        o.ClientId = configuration["Authentication:Google:ClientId"];
+        o.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+    });
 
 builder.Services.AddDbContext<DatabaseContext>
     (options =>
