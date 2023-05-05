@@ -316,8 +316,6 @@ function sendCheckStatus(refId) {
         console.log(data);
         if(data.ResultCode === "Approved") {
             sendOrderPaid();
-            sessionStorage.removeItem("refId");
-            sessionStorage.removeItem("orderId");
         }
         else {
             throw new Error("failed to parse data", data);
@@ -325,6 +323,9 @@ function sendCheckStatus(refId) {
     }).catch(exception => {
         console.error(exception);
         showErrorModal("Error - Error with payment - please order again", exception);
+    }).finally(() => {
+        sessionStorage.removeItem("refId");
+        sessionStorage.removeItem("orderId");
     });
 }
 
