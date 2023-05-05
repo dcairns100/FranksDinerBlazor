@@ -273,10 +273,14 @@ function sendOrder() {
         else {
             hidePleaseWaitModal();
             orderRejected(data.message);
+            sessionStorage.removeItem("refId");
+            sessionStorage.removeItem("orderId");
         }
     }).catch(exception => {
         console.error(exception)
-        showErrorModal("Error - Please contact staff", exception)
+        showErrorModal("Error - Please contact staff", exception);
+        sessionStorage.removeItem("refId");
+        sessionStorage.removeItem("orderId");
     });
 }
 function getDataJSON() {
@@ -284,7 +288,7 @@ function getDataJSON() {
     .then(response => response.json())
     .then(json => loadData(json))
     .catch(exception => {
-        showErrorModal("Error - Please contact staff", exception)
+        showErrorModal("Error - Please contact staff", exception);
     });
 }
 
