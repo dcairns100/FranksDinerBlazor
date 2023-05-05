@@ -223,7 +223,10 @@ function sendOrderPaid() {
             id: sessionStorage.getItem("orderId"),
             status: "paid"
         }),
-        headers: new Headers({'content-type': 'application/json'})
+        headers: new Headers({
+            "Content-Type": "application/json",
+            "Bearer": "1234"
+        })
     }).then(
         console.log("sent order paid")
     ).catch(exception => {
@@ -256,7 +259,10 @@ function sendOrder() {
     fetch(globalSettings.managementSystemUrl + "/api/order", {
         method: "POST",
         body: getOrderBody(),
-        headers: new Headers({'content-type': 'application/json'})
+        headers: new Headers({
+            "Content-Type": "application/json",
+            "Bearer": "1234"
+        })
     }).then(
         response => response.json()
     ).then((data) => {
