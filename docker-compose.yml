@@ -11,8 +11,6 @@ services:
     networks:
       - franks-network
     restart: always
-    depends_on:
-      - server
   server:
     build: .
     container_name: franks-diner-server
