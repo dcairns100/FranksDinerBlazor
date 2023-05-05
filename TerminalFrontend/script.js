@@ -178,18 +178,6 @@ function getOrderBody() {
         TableNumber: 4
     });
 }
-function getUpdateOrderBody() {
-    return JSON.stringify({
-        Items: globalJson.sections.map(
-            section => section.items.filter(
-                item => item.count > 0
-            ).map(
-                item => `${item.count}x ${item.name}`
-            )
-        ).flat(1),
-        TableNumber: 4,
-    });
-}
 
 function getSaleQueryString() {
     const params = new URLSearchParams({
@@ -230,7 +218,7 @@ function sendOrderPaid() {
     }).then(
         console.log("sent order paid")
     ).catch(exception => {
-        showErrorModal("Error - Please contact staff", exception)
+        showErrorModal("Error - Please contact staff", exception);
     });
 }
 
@@ -277,7 +265,7 @@ function sendOrder() {
             sessionStorage.removeItem("orderId");
         }
     }).catch(exception => {
-        console.error(exception)
+        console.error(exception);
         showErrorModal("Error - Please contact staff", exception);
         sessionStorage.removeItem("refId");
         sessionStorage.removeItem("orderId");
@@ -305,7 +293,7 @@ function getCheckStatusQueryString(refId) {
         const days = date.getDate().toString().padStart(2, '0');
         const year = date.getFullYear().toString();
         return `${month}${days}${year}`;
-    }
+    };
     const params = new URLSearchParams({
         Key: globalSettings.apiKey,
         Password: globalSettings.apiPassword,
@@ -332,7 +320,7 @@ function sendCheckStatus(refId) {
             sessionStorage.removeItem("orderId");
         }
         else {
-            throw new Error("failed to parse data", data)
+            throw new Error("failed to parse data", data);
         }
     }).catch(exception => {
         console.error(exception);
