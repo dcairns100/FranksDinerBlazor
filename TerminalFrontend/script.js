@@ -213,7 +213,7 @@ function sendOrderPaid() {
         }),
         headers: new Headers({
             "Content-Type": "application/json",
-            "Bearer": "1234"
+            "authorization": "Bearer 1234"
         })
     }).then(
         console.log("sent order paid")
@@ -249,7 +249,7 @@ function sendOrder() {
         body: getOrderBody(),
         headers: new Headers({
             "Content-Type": "application/json",
-            "Bearer": "1234"
+            "authorization": "Bearer 1234"
         })
     }).then(
         response => response.json()
