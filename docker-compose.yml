@@ -10,6 +10,9 @@ services:
       - "80:80"
     networks:
       - franks-network
+    restart: always
+    depends_on:
+      - server
   server:
     build: .
     container_name: franks-diner-server
@@ -20,6 +23,7 @@ services:
       - "8100:4300"
     networks:
       - franks-network
+    restart: always
 
 networks:
   franks-network:
